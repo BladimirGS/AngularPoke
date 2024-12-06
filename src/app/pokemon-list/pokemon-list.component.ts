@@ -159,27 +159,23 @@ export class PokemonListComponent implements OnInit {
   }
 
   onFileSelected(event: any): void {
-    const file = event.target.files[0];
+    const file = <File>event.target.files[0]
     if (file) {
-      this.tempPokemon.imagenFile = file;
-      console.log(this.tempPokemon.imagenFile);
+      this.tempPokemon.imagenFile = file; // Asigna el archivo seleccionado
     }
   }
-  
+
   savePokemonChanges(): void {
     const filteredIndex = this.filteredPokemonList.findIndex(
       (pokemon) => pokemon.id === this.tempPokemon.id
     );
   
     if (filteredIndex !== -1) {
-      // Actualización local de la lista filtrada
-      this.filteredPokemonList[filteredIndex] = { ...this.tempPokemon };
-  
       // Llamada a la API para actualizar el Pokémon
       const pokemonData = {
         id: this.tempPokemon.id,
-        nombre: this.tempPokemon.nombre,
-        imagenFile: this.tempPokemon.imagenFile,  // Es necesario pasar el archivo aquí
+        nombre: this.tempPokemon.nombre, // Usamos el nombre que se haya actualizado
+        imagen: this.tempPokemon.imagenFile?.name,
       };
   
       // Actualizamos en la API
@@ -191,7 +187,7 @@ export class PokemonListComponent implements OnInit {
           Swal.fire('¡Actualización exitosa!', 'El Pokémon se actualizó correctamente.', 'success');
           
           // Actualiza la lista local después de que la API haya respondido correctamente
-          this.updateLocalPokemonList();
+          this.fetchPokemon();
         },
         error: (error) => {
           console.error('Error al actualizar el Pokémon en la API:', error);
@@ -204,6 +200,39 @@ export class PokemonListComponent implements OnInit {
         }
       });
     }
+  }  
+
+  deleteImage(pokemonId: number): void {
+
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.pokemonService.deletePokemonImage(pokemonId).subscribe({
+          next: (response) => {
+            Swal.fire('Deleted!', 'The Pokémon has been deleted.', 'success');
+    
+            // Después de eliminar la imagen, actualizamos la lista local
+            this.fetchPokemon();
+          },
+          error: (error) => {
+            Swal.fire('Error', 'An error has occurred.', 'error');
+          },
+        });
+        
+      }
+    });
+
   }
-  
+
+  openViewMoreModal(index: number): void {
+    const pokemon = this.localPokemonList[index];
+    this.selectedPokemon = pokemon; // Asigna el Pokémon seleccionado a la variable selectedPokemon
+  }  
 }

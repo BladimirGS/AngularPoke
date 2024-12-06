@@ -61,6 +61,18 @@
                                         <i class="bi bi-pencil"></i>
                                         <span>Edit</span>
                                     </button>
+
+                                    <button type="button" class="boton boton-eliminar"
+                                        (click)="deleteImage(pokemon.id)">
+                                        <i class="bi bi-trash"></i>
+                                        <span>Delete</span>
+                                    </button>
+
+                                    <button type="button" class="boton boton-ver" data-toggle="modal"
+                                        data-target="#viewMoreModal" (click)="openViewMoreModal(i)">
+                                        <i class="bi bi-info-circle"></i>
+                                        <span>View More</span>
+                                    </button>
                                 </td>
                             </tr>
                         </tbody>
@@ -117,14 +129,40 @@
 
                         <div class="mb-3">
                             <label for="pokemonImage" class="form-label">Image</label>
-                            <input type="file" class="form-control" id="pokemonImage" (change)="onFileSelected($event)" />
-                        </div>                        
+                            <input type="file" class="form-control" id="pokemonImage"
+                                (change)="onFileSelected($event)" />
+                        </div>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     <button type="button" class="btn btn-primary" (click)="savePokemonChanges()"
                         data-dismiss="modal">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for View More -->
+    <div class="modal fade" id="viewMoreModal" tabindex="-1" role="dialog" aria-labelledby="viewMoreModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="viewMoreModalLabel">Pokémon Details</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div *ngIf="selectedPokemon">
+                        <h5>{{ selectedPokemon.nombre }}</h5>
+                        <img [src]="selectedPokemon.imagen" alt="{{ selectedPokemon.nombre }}" width="150" />
+                        <!-- <p><strong>ID:</strong> {{ selectedPokemon.id }}</p> -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>

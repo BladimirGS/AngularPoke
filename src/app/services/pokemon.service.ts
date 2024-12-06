@@ -13,23 +13,18 @@ export class PokemonService {
 
   constructor(private http: HttpClient) {}
 
-  getPokemonList(): Observable<Pokemon[]> {
-    return this.http.get<Pokemon[]>(this.apiUrl);
+  getPokemonList(): Observable<Pokemon []> {
+    return this.http.get<Pokemon []>(this.apiUrl);
   }
 
   updatePokemon(id: number, data: any): Observable<any> {
     const url = `${this.apiUrl}/${id}`;
-
     console.log(data)
-    
-    const formData = new FormData();
-    formData.append('id', data.id.toString());
-    formData.append('nombre', data.nombre);
-    if (data.imagenFile) {
-      formData.append('imagen', data.imagenFile, data.imagenFile.name);
-    }
+    return this.http.put<any>(url, data, { headers: { 'Content-Type': 'application/json' } });
+  }  
 
-    // No necesitas poner 'Content-Type': 'application/json' aquí, porque FormData lo maneja automáticamente
-    return this.http.put<any>(url, formData);
+  deletePokemonImage(id: number): Observable<any> {
+    const url = `${this.apiUrl}/${id}/delete`; // Ruta de eliminación de la imagen
+    return this.http.delete<any>(url); // Usamos DELETE para eliminar la imagen
   }
 }

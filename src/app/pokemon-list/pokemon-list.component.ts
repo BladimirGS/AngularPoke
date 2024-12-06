@@ -16,7 +16,7 @@ export class PokemonListComponent implements OnInit {
   pokemonList: Pokemon[] = [];
   localPokemonList: Pokemon[] = [];
   filteredPokemonList: Pokemon[] = [];
-  tempPokemon: Pokemon = { id: 0, nombre: '', imagen: '' };
+  tempPokemon = { id: 0, nombre: '', imagenFile: null as File | null };
   selectedPokemon: Pokemon | null = null;
   loading = true;
   currentPage = 1;
@@ -24,6 +24,8 @@ export class PokemonListComponent implements OnInit {
   sortDirection: 'asc' | 'desc' = 'asc';
   sortBy: 'id' | 'nombre' = 'id';
   searchTerm: string = '';
+  imagenFiles: File | null = null;
+
 
   newPokemon = { nombre: '', imagenFile: null as File | null }; // Define el Pokémon a crear
 
@@ -154,13 +156,50 @@ export class PokemonListComponent implements OnInit {
   }
 
   openEditModal(index: number): void {
-    this.tempPokemon = { ...this.localPokemonList[index] };
-  }
+    const selectedPokemon = this.localPokemonList[index];
+    this.tempPokemon = {
+      ...selectedPokemon,
+      imagenFile: null, // Inicializa imagenFile como null
+    };
+  }  
 
   onFileSelected(event: any): void {
-    const file = <File>event.target.files[0];
+    const file = event.target.files[0];
+
     if (file) {
-      this.tempPokemon.imagenFile = file; // Asigna el archivo seleccionado
+      this.imagenFiles = file;
+      console.log('Imagen seleccionada:', this.newPokemon.imagenFile);
+    }
+  }
+
+  onImageSelected2(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      this.tempPokemon.imagenFile = file;
+      console.log('Imagen seleccionada:', this.tempPokemon.imagenFile);
+    }
+  }
+
+  updatePokemon(): void {
+    if (this.tempPokemon.nombre && this.tempPokemon.id) {
+      const formData = new FormData();
+      formData.append('nombre', this.tempPokemon.nombre);
+      if (this.tempPokemon.imagenFile) {
+        formData.append('imagen', this.tempPokemon.imagenFile, this.tempPokemon.imagenFile.name);
+      }
+
+      this.pokemonService.updatePokemon(this.tempPokemon.id, formData).subscribe({
+        next: (response) => {
+          console.log('Pokémon actualizado:', response);
+          Swal.fire('¡Éxito!', 'El Pokémon ha sido actualizado correctamente.', 'success');
+        },
+        error: (error) => {
+          console.error('Error al actualizar el Pokémon:', error);
+          Swal.fire('Error', 'Hubo un problema al actualizar el Pokémon.', 'error');
+        },
+      });
+    } else {
+      Swal.fire('Advertencia', 'Por favor complete todos los campos.', 'warning');
     }
   }
 
@@ -168,14 +207,23 @@ export class PokemonListComponent implements OnInit {
     const filteredIndex = this.filteredPokemonList.findIndex(
       (pokemon) => pokemon.id === this.tempPokemon.id
     );
-
-    if (filteredIndex !== -1) {
+     console.log(this.imagenFiles)
+    if (this.imagenFiles) {
       // Llamada a la API para actualizar el Pokémon
-      const pokemonData = {
-        id: this.tempPokemon.id,
-        nombre: this.tempPokemon.nombre, // Usamos el nombre que se haya actualizado
-        imagen: this.tempPokemon.imagenFile?.name,
-      };
+      // const pokemonData = {
+      //   id: this.tempPokemon.id,
+      //   nombre: this.tempPokemon.nombre, // Usamos el nombre que se haya actualizado
+      //   imagen: this.tempPokemon.imagenFile?.name,
+      // };
+      
+      const pokemonData = new FormData();
+        pokemonData.append('nombre', this.tempPokemon.nombre);
+        pokemonData.append(
+          'imagen',
+          this.imagenFiles,
+          this.imagenFiles.name
+        );
+
 
       // Actualizamos en la API
       this.pokemonService

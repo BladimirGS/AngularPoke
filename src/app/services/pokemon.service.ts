@@ -27,4 +27,9 @@ export class PokemonService {
     const url = `${this.apiUrl}/${id}/delete`; // Ruta de eliminación de la imagen
     return this.http.delete<any>(url); // Usamos DELETE para eliminar la imagen
   }
+
+    // Método para crear un nuevo Pokémon
+    createPokemon(formData: FormData): Observable<any> {
+      return this.http.post<any>(`${this.apiUrl}/create`, formData);
+    }
 }

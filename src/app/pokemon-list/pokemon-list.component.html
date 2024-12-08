@@ -3,7 +3,8 @@
         <div class="card-header">
             <h1 class="card-title">List of Pokemon</h1>
             <div class="controls">
-                <button type="button" class="boton boton-editar" data-toggle="modal" data-target="#createPokemonModal">
+                <button type="button" class="boton boton-editar" data-toggle="modal" data-target="#createPokemonModal"
+                    (click)="openCreateModal()">
                     <i class="bi bi-pencil"></i>
                     <span>create</span>
                 </button>
@@ -13,12 +14,12 @@
                 </div>
                 <div class="page-size-selector">
                     <label for="pageSize">Records per page:</label>
-                    <select id="pageSize" [(ngModel)]="pageSize" (change)="updateLocalPokemonList()">
+                    <select id="pageSize" [(ngModel)]="pageSize" (change)="onPageSizeChange()">
                         <option [ngValue]="5">5</option>
                         <option [ngValue]="10">10</option>
                         <option [ngValue]="20">20</option>
                         <option [ngValue]="50">50</option>
-                    </select>
+                      </select>                      
                 </div>
             </div>
         </div>
@@ -110,56 +111,6 @@
         </div>
     </div>
 
-
-
-    <!-- Modal for edit Pokemon -->
-    <div class="modal fade" id="editPokemonModal" tabindex="-1" role="dialog" aria-labelledby="editPokemonModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editPokemonModalLabel">Edit Pokémon</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form (ngSubmit)="updatePokemon()">
-                        <div class="form-group">
-                          <label for="pokemonName">Nombre del Pokémon</label>
-                          <input 
-                            type="text" 
-                            id="pokemonName" 
-                            [(ngModel)]="tempPokemon.nombre" 
-                            name="nombre" 
-                            class="form-control" 
-                            required
-                          />
-                        </div>
-                      
-                        <div class="form-group">
-                          <label for="pokemonImage">Actualizar Imagen del Pokémon</label>
-                          <input 
-                            type="file" 
-                            id="pokemonImage" 
-                            (change)="onImageSelected2($event)" 
-                            class="form-control" 
-                          />
-                        </div>
-                      
-                        <button type="submit" class="btn btn-primary">Actualizar Pokémon</button>
-                      </form>
-                      
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" (click)="savePokemonChanges()"
-                        data-dismiss="modal">Save</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Modal for View More -->
     <div class="modal fade" id="viewMoreModal" tabindex="-1" role="dialog" aria-labelledby="viewMoreModalLabel"
         aria-hidden="true">
@@ -192,23 +143,22 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="createPokemonModalLabel">Create Pokémon</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="closeCreate">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <!-- Formulario para crear un Pokémon -->
                     <form (ngSubmit)="createPokemon()">
                         <div class="form-group">
                             <label for="pokemonName">Nombre del Pokémon</label>
-                            <input type="text" id="pokemonName" [(ngModel)]="newPokemon.nombre" name="nombre"
+                            <input type="text" id="pokemonName" [(ngModel)]="tempPokemon.nombre" name="nombre"
                                 class="form-control" required />
                         </div>
 
                         <div class="form-group">
-                            <label for="pokemonImage">Imagen del Pokémon</label>
-                            <input type="file" id="pokemonImage" (change)="onImageSelected($event)" class="form-control"
-                                required />
+                            <label for="createPokemonImage">Imagen del Pokémon</label>
+                            <input type="file" id="createPokemonImage" (change)="onImageSelected($event)"
+                                class="form-control" required />
                         </div>
 
                         <div class="modal-footer">
@@ -222,4 +172,40 @@
         </div>
     </div>
 
+    <!-- Modal for edit Pokemon -->
+    <div class="modal fade" id="editPokemonModal" tabindex="-1" role="dialog" aria-labelledby="editPokemonModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editPokemonModalLabel">Edit Pokémon</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="closeEdit">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form (ngSubmit)="updatePokemon()">
+                        <div class="form-group">
+                            <label for="pokemonName">Nombre del Pokémon</label>
+                            <input type="text" id="pokemonName" [(ngModel)]="tempPokemon.nombre" name="nombre"
+                                class="form-control" required />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="editPokemonImage">Actualizar Imagen del Pokémon</label>
+                            <input type="file" id="editPokemonImage" (change)="onImageSelected($event)"
+                                class="form-control" />
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </div>
+                    </form>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
 </div>

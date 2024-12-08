@@ -13,10 +13,9 @@ import { UserService } from '../services/user.service';
 })
 export class DashboardComponent implements OnInit {
   menuItems = [
-    { name: 'Users', link: '/dashboard/users', icon: 'group' }, // Ícono para usuarios
-    { name: 'Pokemon', link: '/dashboard/pokemon', icon: 'pets' }, // Ícono para Pokémon
+    { name: 'Pokemon', link: '/dashboard/pokemon', icon: 'pets' },
   ];
-  
+
   currentUser: any = null;
 
   constructor(private userService: UserService, private router: Router) {}
@@ -26,7 +25,7 @@ export class DashboardComponent implements OnInit {
   }
 
   logout(): void {
-    this.currentUser = null; 
+    this.currentUser = null;
     this.userService.logout();
     this.router.navigate(['/login']);
   }

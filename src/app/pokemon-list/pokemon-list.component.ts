@@ -24,10 +24,6 @@ export class PokemonListComponent implements OnInit {
   sortDirection: 'asc' | 'desc' = 'asc';
   sortBy: 'id' | 'nombre' = 'id';
   searchTerm: string = '';
-  imagenFiles: File | null = null;
-
-
-  newPokemon = { nombre: '', imagenFile: null as File | null }; // Define el Pokémon a crear
 
   constructor(private pokemonService: PokemonService) {}
 
@@ -54,9 +50,14 @@ export class PokemonListComponent implements OnInit {
     const start = (this.currentPage - 1) * this.pageSize;
     const end = start + this.pageSize;
     this.localPokemonList = this.filteredPokemonList.slice(start, end);
-
+  
     this.sortList();
   }
+
+  onPageSizeChange() {
+    this.currentPage = 1; 
+    this.updateLocalPokemonList();
+  }  
 
   onSearch(): void {
     const term = this.searchTerm.toLowerCase();
@@ -155,109 +156,134 @@ export class PokemonListComponent implements OnInit {
     this.sortList();
   }
 
+  openViewMoreModal(index: number): void {
+    const pokemon = this.localPokemonList[index];
+    this.selectedPokemon = pokemon; 
+  }
+
+  openCreateModal(): void {
+    this.tempPokemon = { id: 0, nombre: '', imagenFile: null };
+  
+    const fileInput = document.getElementById('pokemonImage') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = ''; 
+    }
+  }  
+
   openEditModal(index: number): void {
     const selectedPokemon = this.localPokemonList[index];
     this.tempPokemon = {
       ...selectedPokemon,
-      imagenFile: null, // Inicializa imagenFile como null
+      imagenFile: null, 
     };
-  }  
-
-  onFileSelected(event: any): void {
-    const file = event.target.files[0];
-
-    if (file) {
-      this.imagenFiles = file;
-      console.log('Imagen seleccionada:', this.newPokemon.imagenFile);
-    }
   }
 
-  onImageSelected2(event: any): void {
+  onImageSelected(event: any): void {
     const file = event.target.files[0];
     if (file) {
       this.tempPokemon.imagenFile = file;
-      console.log('Imagen seleccionada:', this.tempPokemon.imagenFile);
     }
   }
+
+  createPokemon(): void {
+    if (this.tempPokemon.nombre && this.tempPokemon.imagenFile) {
+      const formData = new FormData();
+      formData.append('nombre', this.tempPokemon.nombre);
+      formData.append(
+        'imagen',
+        this.tempPokemon.imagenFile,
+        this.tempPokemon.imagenFile.name
+      );
+  
+      this.pokemonService.createPokemon(formData).subscribe({
+        next: (response) => {
+          Swal.fire(
+            '¡Éxito!',
+            'El Pokémon ha sido creado correctamente.',
+            'success'
+          );
+  
+          this.fetchPokemon();
+  
+          this.tempPokemon = { id: 0, nombre: '', imagenFile: null };
+  
+          const fileInput = document.getElementById('createPokemonImage') as HTMLInputElement;
+          if (fileInput) {
+            fileInput.value = '';
+          }
+  
+          const boton = document.getElementById('closeCreate') as HTMLButtonElement;
+
+          if (boton) {
+            boton.click();
+          }
+        },
+        error: (error) => {
+          console.error('Error al crear el Pokémon:', error);
+          Swal.fire('Error', 'Hubo un problema al crear el Pokémon.', 'error');
+        },
+      });
+    } else {
+      Swal.fire(
+        'Advertencia',
+        'Por favor complete todos los campos.',
+        'warning'
+      );
+    }
+  }  
 
   updatePokemon(): void {
     if (this.tempPokemon.nombre && this.tempPokemon.id) {
       const formData = new FormData();
       formData.append('nombre', this.tempPokemon.nombre);
       if (this.tempPokemon.imagenFile) {
-        formData.append('imagen', this.tempPokemon.imagenFile, this.tempPokemon.imagenFile.name);
+        formData.append(
+          'imagen',
+          this.tempPokemon.imagenFile,
+          this.tempPokemon.imagenFile.name
+        );
       }
-
+  
       this.pokemonService.updatePokemon(this.tempPokemon.id, formData).subscribe({
         next: (response) => {
-          console.log('Pokémon actualizado:', response);
-          Swal.fire('¡Éxito!', 'El Pokémon ha sido actualizado correctamente.', 'success');
+          Swal.fire(
+            '¡Éxito!',
+            'El Pokémon ha sido actualizado correctamente.',
+            'success'
+          );
+  
+          this.fetchPokemon();
+  
+          this.tempPokemon = { id: 0, nombre: '', imagenFile: null };
+  
+          const fileInput = document.getElementById('editPokemonImage') as HTMLInputElement;
+          if (fileInput) {
+            fileInput.value = '';
+          }
+  
+          const boton = document.getElementById('closeEdit') as HTMLButtonElement;
+
+          if (boton) {
+            boton.click(); 
+          }
         },
         error: (error) => {
           console.error('Error al actualizar el Pokémon:', error);
-          Swal.fire('Error', 'Hubo un problema al actualizar el Pokémon.', 'error');
+          Swal.fire(
+            'Error',
+            'Hubo un problema al actualizar el Pokémon.',
+            'error'
+          );
         },
       });
     } else {
-      Swal.fire('Advertencia', 'Por favor complete todos los campos.', 'warning');
+      Swal.fire(
+        'Advertencia',
+        'Por favor complete todos los campos.',
+        'warning'
+      );
     }
-  }
-
-  savePokemonChanges(): void {
-    const filteredIndex = this.filteredPokemonList.findIndex(
-      (pokemon) => pokemon.id === this.tempPokemon.id
-    );
-     console.log(this.imagenFiles)
-    if (this.imagenFiles) {
-      // Llamada a la API para actualizar el Pokémon
-      // const pokemonData = {
-      //   id: this.tempPokemon.id,
-      //   nombre: this.tempPokemon.nombre, // Usamos el nombre que se haya actualizado
-      //   imagen: this.tempPokemon.imagenFile?.name,
-      // };
-      
-      const pokemonData = new FormData();
-        pokemonData.append('nombre', this.tempPokemon.nombre);
-        pokemonData.append(
-          'imagen',
-          this.imagenFiles,
-          this.imagenFiles.name
-        );
-
-
-      // Actualizamos en la API
-      this.pokemonService
-        .updatePokemon(this.tempPokemon.id, pokemonData)
-        .subscribe({
-          next: (response) => {
-            console.log('Pokémon actualizado en la API:', response);
-
-            // Muestra alerta de éxito
-            Swal.fire(
-              '¡Actualización exitosa!',
-              'El Pokémon se actualizó correctamente.',
-              'success'
-            );
-
-            // Actualiza la lista local después de que la API haya respondido correctamente
-            this.fetchPokemon();
-          },
-          error: (error) => {
-            console.error('Error al actualizar el Pokémon en la API:', error);
-
-            // Muestra alerta de error
-            Swal.fire(
-              'Error',
-              'Hubo un problema al actualizar el Pokémon.',
-              'error'
-            );
-          },
-          complete: () => {
-            console.log('Operación completada');
-          },
-        });
-    }
-  }
+  }  
 
   deleteImage(pokemonId: number): void {
     Swal.fire({
@@ -274,7 +300,6 @@ export class PokemonListComponent implements OnInit {
           next: (response) => {
             Swal.fire('Deleted!', 'The Pokémon has been deleted.', 'success');
 
-            // Después de eliminar la imagen, actualizamos la lista local
             this.fetchPokemon();
           },
           error: (error) => {
@@ -284,71 +309,4 @@ export class PokemonListComponent implements OnInit {
       }
     });
   }
-
-  openViewMoreModal(index: number): void {
-    const pokemon = this.localPokemonList[index];
-    this.selectedPokemon = pokemon; // Asigna el Pokémon seleccionado a la variable selectedPokemon
-  }
-
-  // Maneja la selección del archivo de imagen
-  onImageSelected(event: any): void {
-    const file = event.target.files[0];
-    if (file) {
-      this.newPokemon.imagenFile = file;
-      console.log('Imagen seleccionada:', this.newPokemon.imagenFile);
-    }
-  }
-
-  // Función para crear el Pokémon
-  createPokemon(): void {
-    if (this.newPokemon.nombre && this.newPokemon.imagenFile) {
-      const formData = new FormData();
-      formData.append('nombre', this.newPokemon.nombre);
-      formData.append(
-        'imagen',
-        this.newPokemon.imagenFile,
-        this.newPokemon.imagenFile.name
-      );
-  
-      this.pokemonService.createPokemon(formData).subscribe({
-        next: (response) => {
-          console.log('Nuevo Pokémon creado:', response);
-          Swal.fire(
-            '¡Éxito!',
-            'El Pokémon ha sido creado correctamente.',
-            'success'
-          );
-
-          this.fetchPokemon();
-  
-          // Cierra el modal
-          const modal = document.getElementById('createPokemonModal');
-          if (modal) {
-            (modal as any).classList.remove('show');
-            modal.setAttribute('aria-hidden', 'true');
-            modal.setAttribute('style', 'display: none;');
-            document.body.classList.remove('modal-open');
-            const backdrop = document.querySelector('.modal-backdrop');
-            if (backdrop) {
-              backdrop.remove();
-            }
-          }
-  
-          // Limpia los campos del formulario
-          this.newPokemon = { nombre: '', imagenFile: null };
-        },
-        error: (error) => {
-          console.error('Error al crear el Pokémon:', error);
-          Swal.fire('Error', 'Hubo un problema al crear el Pokémon.', 'error');
-        },
-      });
-    } else {
-      Swal.fire(
-        'Advertencia',
-        'Por favor complete todos los campos.',
-        'warning'
-      );
-    }
-  }
-  
 }

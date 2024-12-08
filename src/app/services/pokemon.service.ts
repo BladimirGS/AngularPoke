@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Pokemon } from '../models/pokemon.model';
-import axios from 'axios';
 
 @Injectable({
   providedIn: 'root',
@@ -26,7 +25,6 @@ export class PokemonService {
     console.log(formData)
     return this.http.post<any>(url, formData);
   }
-  
 
   deletePokemonImage(id: number): Observable<any> {
     const url = `${this.apiUrl}/delete/${id}`; 

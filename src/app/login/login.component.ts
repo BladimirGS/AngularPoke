@@ -43,18 +43,20 @@ export class LoginComponent {
 
   onSubmit() {
     if (this.email.valid && this.password) {
-      this.userService.authenticate(this.email.value!, this.password)
-        .subscribe(authenticated => {
+      this.userService.authenticate(this.email.value!, this.password).subscribe({
+        next: (authenticated) => {
           if (authenticated) {
             this.router.navigate(['/dashboard']);
-          } else {
-            this.error = 'Correo electrónico o contraseña incorrectos';
           }
-        });
+        },
+        error: (err: Error) => {
+          this.error = err.message; // Mostrar el mensaje del backend
+        },
+      });
     } else {
       this.error = 'Por favor, completa todos los campos correctamente.';
     }
-  }
+  }   
 
   updateErrorMessage() {
     if (this.email.hasError('required')) {

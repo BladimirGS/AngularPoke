@@ -2,6 +2,7 @@
     <mat-card class="login-card">
         <h2>Iniciar sesión</h2>
         <form (ngSubmit)="onSubmit()">
+            <p *ngIf="error" class="error">{{ error }}</p>
             <mat-form-field class="full-width mb-2">
                 <mat-label>Correo electrónico</mat-label>
                 <input matInput placeholder="pat@example.com" [formControl]="email" (blur)="updateErrorMessage()"
@@ -21,6 +22,5 @@
 
             <button mat-flat-button type="submit" color="primary" class="full-width">Iniciar sesión</button>
         </form>
-        <p *ngIf="error" class="error">{{ error }}</p>
     </mat-card>
 </div>

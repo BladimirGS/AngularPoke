@@ -1,38 +1,24 @@
 <div class="table-container">
     <div class="card">
         <div class="card-header">
-            <h1 class="card-title">User Table</h1>
-
+            <h1 class="card-title">Lista de usuarios</h1>
             <div class="controls">
                 <button type="button" class="boton boton-editar" data-toggle="modal" data-target="#createUserModal"
                     (click)="openCreateModal()">
                     <i class="bi bi-pencil"></i>
                     <span>create</span>
                 </button>
-                <!-- <div class="search-bar">
-                    <input type="text" placeholder="Search by name or ID..." [(ngModel)]="searchTerm"
-                        (input)="onSearch()" />
-                </div>
-                <div class="page-size-selector">
-                    <label for="pageSize">Records per page:</label>
-                    <select id="pageSize" [(ngModel)]="pageSize" (change)="onPageSizeChange()">
-                        <option [ngValue]="5">5</option>
-                        <option [ngValue]="10">10</option>
-                        <option [ngValue]="20">20</option>
-                        <option [ngValue]="50">50</option>
-                      </select>                      
-                </div> -->
             </div>
         </div>
         <div class="card-content">
             <ng-container *ngIf="loading; else loadedContent">
                 <div class="skeleton-container">
-                    <div *ngFor="let item of [1, 2, 3, 4, 5]" class="skeleton"></div>
+                    <div *ngFor="let item of [1,2,3,4,5]" class="skeleton"></div>
                 </div>
             </ng-container>
             <ng-template #loadedContent>
                 <div class="table-responsive">
-                    <table class="user-table">
+                    <table class="pokemon-table">
                         <thead>
                             <tr>
                                 <th>ID</th>
@@ -46,15 +32,19 @@
                                 <td>{{ user.name }}</td>
                                 <td>{{ user.email }}</td>
                                 <td>
-                                    <button class="btn btn-sm btn-primary" data-toggle="modal"
-                                        data-target="#editUserModal" (click)="openEditModal(i)">
+                                    <button class="boton boton-editar" data-toggle="modal" data-target="#editUserModal"
+                                        (click)="openEditModal(i)">
                                         Editar
                                     </button>
-                                    
-                                    <button type="button" class="boton boton-eliminar"
-                                        (click)="deleteUser(i)">
+
+                                    <button type="button" class="boton boton-eliminar" (click)="user.id && deleteUser(user.id)">
                                         <i class="bi bi-trash"></i>
                                         <span>Delete</span>
+                                    </button>
+
+                                    <button type="button" class="boton boton-ver" data-toggle="modal"
+                                        data-target="#viewMoreModal" (click)="openViewMoreModal(i)">
+                                        <i class="bi bi-info-circle"></i>
                                     </button>
                                 </td>
                             </tr>
@@ -151,6 +141,31 @@
                             <button type="submit" class="btn btn-primary">Guardar</button>
                         </div>
                     </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para visualizar usuario -->
+    <div class="modal fade" id="viewMoreModal" tabindex="-1" aria-labelledby="viewUserModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="viewUserModalLabel">Detalles del Usuario</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Nombre</label>
+                        <p class="form-control-plaintext" id="userName">{{ tempUser.name }}</p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Correo</label>
+                        <p class="form-control-plaintext" id="userEmail">{{ tempUser.email }}</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">cerrar</button>
                 </div>
             </div>
         </div>

@@ -239,7 +239,7 @@ export class PokemonListComponent implements OnInit {
       if (this.tempPokemon.imagenFile) {
         formData.append(
           'imagen',
-          // this.tempPokemon.imagenFile,
+          this.tempPokemon.imagenFile,
           this.tempPokemon.imagenFile.name
         );
       }

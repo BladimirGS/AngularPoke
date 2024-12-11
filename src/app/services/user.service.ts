@@ -3,6 +3,10 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { User } from '../models/user.model';
 import axios from 'axios';
+import { catchError } from 'rxjs/operators';
+import { throwError } from 'rxjs';
+import { map } from 'rxjs/operators';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -16,13 +20,26 @@ export class UserService {
   }
 
   authenticate(email: string, password: string): Observable<boolean> {
-    return this.http.post<any>(`${this.apiUrl}/login`, { email: email, password: password});
-  }
+    return this.http.post<any>(`${this.apiUrl}/login`, { email, password }).pipe(
+      map((response) => {
+        if (response && response.user) {
+          // Guarda los datos del usuario en localStorage
+          localStorage.setItem('currentUser', JSON.stringify(response.user));
+          return true;
+        }
+        return false;
+      }),
+      catchError((error) => {
+        const errorMessage = error.error?.message || 'Error al autenticar';
+        return throwError(() => new Error(errorMessage));
+      })
+    );
+  }  
 
   getCurrentUser(): any {
     const user = localStorage.getItem('currentUser');
     return user ? JSON.parse(user) : null;
-  }
+  }  
 
   createUser(formData: FormData): Observable<any> {
     console.log(formData);

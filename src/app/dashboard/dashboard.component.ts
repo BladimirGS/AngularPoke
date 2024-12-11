@@ -23,7 +23,7 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.currentUser = this.userService.getCurrentUser();
-  }
+  }  
 
   logout(): void {
     this.currentUser = null;

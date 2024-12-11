@@ -157,4 +157,13 @@ export class UserListComponent implements OnInit {
       }
     });
   }
+
+  openViewMoreModal(index: number): void {
+    if (index >= 0 && index < this.displayedUsers.length) {
+      const selectedUser = this.displayedUsers[index];
+      this.tempUser = { ...selectedUser }; 
+    } else {
+      console.error('Índice fuera de rango al intentar editar usuario.');
+    }
+  }
 }

@@ -29,3 +29,9 @@
 .mb-2 {
   margin-bottom: 0.5rem; 
 }
+
+.error {
+  color: red;
+  font-size: 0.9rem;
+  margin-top: 10px;
+}

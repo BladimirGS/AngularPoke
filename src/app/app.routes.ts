@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './login/login.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { UserListComponent } from './user-list/user-list.component';
 import { PokemonListComponent } from './pokemon-list/pokemon-list.component';
 
 export const routes: Routes = [
@@ -11,6 +12,7 @@ export const routes: Routes = [
     component: DashboardComponent,
     children: [
       { path: '', redirectTo: 'pokemon', pathMatch: 'full' },
+      { path: 'users', component: UserListComponent }, 
       { path: 'pokemon', component: PokemonListComponent }
     ]
   }

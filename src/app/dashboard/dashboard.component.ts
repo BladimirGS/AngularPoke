@@ -13,6 +13,7 @@ import { UserService } from '../services/user.service';
 })
 export class DashboardComponent implements OnInit {
   menuItems = [
+    { name: 'Users', link: '/dashboard/users', icon: 'group' },
     { name: 'Pokemon', link: '/dashboard/pokemon', icon: 'pets' },
   ];
 

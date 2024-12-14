@@ -10,7 +10,7 @@ import { User } from '../models/user.model';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './user-list.component.html',
-  styleUrls: ['./user-list.component.css']
+  styleUrls: ['./user-list.component.css'],
 })
 export class UserListComponent implements OnInit {
   users: User[] = [];
@@ -18,7 +18,8 @@ export class UserListComponent implements OnInit {
   loading = true;
   currentPage = 1;
   pageSize = 5;
-  tempUser: { id?: number; name?: string; email?: string; password?: string } = {};
+  tempUser: { id?: number; name?: string; email?: string; password?: string } =
+    {};
   selectedPokemon: User | null = null;
 
   constructor(private userService: UserService) {}
@@ -47,78 +48,6 @@ export class UserListComponent implements OnInit {
     this.displayedUsers = this.users.slice(startIndex, endIndex);
   }
 
-  openCreateModal(): void {
-    this.tempUser = { id: 0, name: '', email: '', password: '' };
-  }
-
-  createUser(): void {
-    if (this.tempUser.name && this.tempUser.email && this.tempUser.password) {
-      const formData = new FormData();
-      formData.append('name', this.tempUser.name);
-      formData.append('email', this.tempUser.email);
-      formData.append('password', this.tempUser.password);
-
-      this.userService.createUser(formData).subscribe({
-        next: () => {
-          Swal.fire('¡Éxito!', 'El usuario ha sido creado correctamente.', 'success');
-          this.fetchUsers();
-          this.tempUser = { id: 0, name: '', email: '', password: '' };
-
-          const boton = document.getElementById('closeCreate') as HTMLButtonElement;
-          if (boton) boton.click();
-        },
-        error: (error) => {
-          console.error('Error al crear el usuario:', error);
-          Swal.fire('Error', 'Hubo un problema al crear el usuario.', 'error');
-        },
-      });
-    } else {
-      Swal.fire('Advertencia', 'Por favor complete todos los campos.', 'warning');
-    }
-  }
-
-  openEditModal(index: number): void {
-    if (index >= 0 && index < this.displayedUsers.length) {
-      const selectedUser = this.displayedUsers[index];
-      this.tempUser = { ...selectedUser }; 
-    } else {
-      console.error('Índice fuera de rango al intentar editar usuario.');
-    }
-  }
-  
-
-  editUser(): void {
-    if (this.tempUser.id && this.tempUser.name && this.tempUser.email) {
-      const formData = new FormData();
-      formData.append('name', this.tempUser.name);
-      formData.append('email', this.tempUser.email);
-      if (this.tempUser.password) {
-        formData.append('password', this.tempUser.password);
-      }
-    
-      // Verificar qué datos se están enviando
-      formData.forEach((value, key) => {
-        console.log(`${key}: ${value}`);
-      });
-  
-      this.userService.updateUser(this.tempUser.id, formData).subscribe({
-        next: () => {
-          Swal.fire('¡Éxito!', 'El usuario ha sido actualizado correctamente.', 'success');
-          this.fetchUsers();
-  
-          const boton = document.getElementById('closeEdit') as HTMLButtonElement;
-          if (boton) boton.click();
-        },
-        error: (error) => {
-          console.error('Error al editar el usuario:', error);
-          Swal.fire('Error', 'Hubo un problema al actualizar el usuario.', 'error');
-        },
-      });
-    } else {
-      Swal.fire('Advertencia', 'Por favor complete todos los campos.', 'warning');
-    }
-  }  
-
   previousPage(): void {
     if (this.currentPage > 1) {
       this.currentPage--;
@@ -130,6 +59,87 @@ export class UserListComponent implements OnInit {
     if (this.currentPage < Math.ceil(this.users.length / this.pageSize)) {
       this.currentPage++;
       this.updateDisplayedUsers();
+    }
+  }
+
+  openCreateModal(): void {
+    this.tempUser = { id: 0, name: '', email: '', password: '' };
+  }
+
+  createUser(): void {
+    if (this.tempUser.name && this.tempUser.email && this.tempUser.password) {
+      const user = {
+        name: this.tempUser.name,
+        email: this.tempUser.email,
+        password: this.tempUser.password,
+      };
+
+      this.userService.createUser(user).subscribe({
+        next: () => {
+          Swal.fire(
+            'Success!',
+            'The user has been created successfully.',
+            'success'
+          );
+          this.fetchUsers();
+          this.tempUser = { id: 0, name: '', email: '', password: '' };
+
+          const closeButton = document.getElementById(
+            'closeCreate'
+          ) as HTMLButtonElement;
+          if (closeButton) closeButton.click();
+        },
+        error: (error) => {
+          console.error('Error creating user:', error);
+          Swal.fire('Error', 'There was a problem creating the user.', 'error');
+        },
+      });
+    } else {
+      Swal.fire('Warning', 'Please fill in all fields.', 'warning');
+    }
+  }
+
+  openEditModal(index: number): void {
+    if (index >= 0 && index < this.displayedUsers.length) {
+      const selectedUser = this.displayedUsers[index];
+      this.tempUser = { ...selectedUser };
+    } else {
+      console.error('Índice fuera de rango al intentar editar usuario.');
+    }
+  }
+
+  editUser(): void {
+    if (this.tempUser.id && this.tempUser.name && this.tempUser.email) {
+      const user: any = {
+        name: this.tempUser.name,
+        email: this.tempUser.email,
+      };
+
+      if (this.tempUser.password) {
+        user.password = this.tempUser.password;
+      }
+
+      this.userService.updateUser(this.tempUser.id, user).subscribe({
+        next: () => {
+          Swal.fire(
+            'Success!',
+            'The user has been updated successfully.',
+            'success'
+          );
+          this.fetchUsers();
+
+          const closeButton = document.getElementById(
+            'closeEdit'
+          ) as HTMLButtonElement;
+          if (closeButton) closeButton.click();
+        },
+        error: (error) => {
+          console.error('Error updating the user:', error);
+          Swal.fire('Error', 'There was a problem updating the user.', 'error');
+        },
+      });
+    } else {
+      Swal.fire('Warning', 'Please fill in all required fields.', 'warning');
     }
   }
 
@@ -145,13 +155,21 @@ export class UserListComponent implements OnInit {
     }).then((result) => {
       if (result.isConfirmed) {
         this.userService.deleteUser(id).subscribe({
-          next: (response) => {
-            Swal.fire('Deleted!', 'The Pokémon has been deleted.', 'success');
-
+          next: () => {
+            Swal.fire(
+              'Deleted!',
+              'The user has been deleted successfully.',
+              'success'
+            );
             this.fetchUsers();
           },
           error: (error) => {
-            Swal.fire('Error', 'An error has occurred.', 'error');
+            console.error('Error deleting the user:', error);
+            Swal.fire(
+              'Error',
+              'An error occurred while deleting the user.',
+              'error'
+            );
           },
         });
       }
@@ -161,7 +179,7 @@ export class UserListComponent implements OnInit {
   openViewMoreModal(index: number): void {
     if (index >= 0 && index < this.displayedUsers.length) {
       const selectedUser = this.displayedUsers[index];
-      this.tempUser = { ...selectedUser }; 
+      this.tempUser = { ...selectedUser };
     } else {
       console.error('Índice fuera de rango al intentar editar usuario.');
     }

@@ -2,8 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Pokemon } from '../models/pokemon.model';
-import { HttpHeaders } from '@angular/common/http';
-import axios from 'axios';
 
 @Injectable({
   providedIn: 'root',
@@ -18,22 +16,15 @@ export class PokemonService {
   }
 
   createPokemon(formData: FormData): Observable<any> {
-    console.log(formData);
-    return this.http.post<any>(`${this.apiUrl}/create`, formData);
+    return this.http.post<any>(this.apiUrl, formData);
   }
 
   updatePokemon(id: number, formData: FormData): Observable<any> {
-    const url = `${this.apiUrl}/update/${id}`;
-
-    // Agregar el método override
     formData.append('_method', 'PUT');
-
-    // Usar POST en lugar de PUT
-    return this.http.post<any>(url, formData);
+    return this.http.post<any>(`${this.apiUrl}/${id}`, formData);
   }
 
-  deletePokemonImage(id: number): Observable<any> {
-    const url = `${this.apiUrl}/delete/${id}`;
-    return this.http.delete<any>(url);
+  deletePokemon(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/${id}`);
   }
 }

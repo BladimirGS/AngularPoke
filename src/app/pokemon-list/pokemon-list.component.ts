@@ -296,7 +296,7 @@ export class PokemonListComponent implements OnInit {
       confirmButtonText: 'Yes, delete it!',
     }).then((result) => {
       if (result.isConfirmed) {
-        this.pokemonService.deletePokemonImage(pokemonId).subscribe({
+        this.pokemonService.deletePokemon(pokemonId).subscribe({
           next: (response) => {
             Swal.fire('Deleted!', 'The Pokémon has been deleted.', 'success');
 

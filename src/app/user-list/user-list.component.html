@@ -1,7 +1,7 @@
 <div class="table-container">
     <div class="card">
         <div class="card-header">
-            <h1 class="card-title">Lista de usuarios</h1>
+            <h1 class="card-title">List of Users</h1>
             <div class="controls">
                 <button type="button" class="boton boton-editar" data-toggle="modal" data-target="#createUserModal"
                     (click)="openCreateModal()">
@@ -18,12 +18,13 @@
             </ng-container>
             <ng-template #loadedContent>
                 <div class="table-responsive">
-                    <table class="pokemon-table">
+                    <table class="user-table">
                         <thead>
                             <tr>
                                 <th>ID</th>
                                 <th>Name</th>
                                 <th>Email</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -34,10 +35,12 @@
                                 <td>
                                     <button class="boton boton-editar" data-toggle="modal" data-target="#editUserModal"
                                         (click)="openEditModal(i)">
-                                        Editar
+                                        <i class="bi bi-pencil"></i>
+                                        <span>Edit</span>
                                     </button>
 
-                                    <button type="button" class="boton boton-eliminar" (click)="user.id && deleteUser(user.id)">
+                                    <button type="button" class="boton boton-eliminar"
+                                        (click)="user.id && deleteUser(user.id)">
                                         <i class="bi bi-trash"></i>
                                         <span>Delete</span>
                                     </button>
@@ -45,6 +48,7 @@
                                     <button type="button" class="boton boton-ver" data-toggle="modal"
                                         data-target="#viewMoreModal" (click)="openViewMoreModal(i)">
                                         <i class="bi bi-info-circle"></i>
+                                        <span>View More</span>
                                     </button>
                                 </td>
                             </tr>
@@ -63,110 +67,116 @@
             </ng-template>
         </div>
     </div>
+</div>
 
-    <!-- Modal para crear usuario -->
-    <div class="modal fade" id="createUserModal" tabindex="-1" role="dialog" aria-labelledby="createUserModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="createUserModalLabel">Create User</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="closeCreate">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form (ngSubmit)="createUser()">
-                        <div class="form-group">
-                            <label for="userName">Name</label>
-                            <input type="text" id="userName" [(ngModel)]="tempUser.name" name="name"
-                                class="form-control" required />
-                        </div>
+<!-- Modal for create User -->
+<div class="modal fade" id="createUserModal" tabindex="-1" role="dialog" aria-labelledby="createUserModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createUserModalLabel">Create User</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="closeCreate">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form (ngSubmit)="createUser()">
+                    <div class="form-group">
+                        <label for="userName">Name</label>
+                        <input type="text" id="userName" [(ngModel)]="tempUser.name" name="name" class="form-control"
+                            required />
+                    </div>
 
-                        <div class="form-group">
-                            <label for="userEmail">Email</label>
-                            <input type="email" id="userEmail" [(ngModel)]="tempUser.email" name="email"
-                                class="form-control" required />
-                        </div>
+                    <div class="form-group">
+                        <label for="userEmail">Email</label>
+                        <input type="email" id="userEmail" [(ngModel)]="tempUser.email" name="email"
+                            class="form-control" required />
+                    </div>
 
-                        <div class="form-group">
-                            <label for="userPassword">Password</label>
-                            <input type="password" id="userPassword" [(ngModel)]="tempUser.password" name="password"
-                                class="form-control" required />
-                        </div>
+                    <div class="form-group">
+                        <label for="userPassword">Password</label>
+                        <input type="password" id="userPassword" [(ngModel)]="tempUser.password" name="password"
+                            class="form-control" required />
+                    </div>
 
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary">Save</button>
-                        </div>
-                    </form>
-                </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Modal para editar usuario -->
-    <div class="modal fade" id="editUserModal" tabindex="-1" role="dialog" aria-labelledby="editUserModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editUserModalLabel">Editar Usuario</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="closeEdit">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form (ngSubmit)="editUser()">
-                        <div class="form-group">
-                            <label for="editUserName">Nombre</label>
-                            <input type="text" id="editUserName" [(ngModel)]="tempUser.name" name="name"
-                                class="form-control" required />
-                        </div>
 
-                        <div class="form-group">
-                            <label for="editUserEmail">Correo</label>
-                            <input type="email" id="editUserEmail" [(ngModel)]="tempUser.email" name="email"
-                                class="form-control" required />
-                        </div>
+<!-- Modal for edit User -->
+<div class="modal fade" id="editUserModal" tabindex="-1" role="dialog" aria-labelledby="editUserModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editUserModalLabel">Edit User</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="closeEdit">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form (ngSubmit)="editUser()">
+                    <div class="form-group">
+                        <label for="editUserName">Name</label>
+                        <input type="text" id="editUserName" [(ngModel)]="tempUser.name" name="name"
+                            class="form-control" required />
+                    </div>
 
-                        <div class="form-group">
-                            <label for="editUserPassword">Contraseña</label>
-                            <input type="password" id="editUserPassword" [(ngModel)]="tempUser.password" name="password"
-                                class="form-control" />
-                        </div>
+                    <div class="form-group">
+                        <label for="editUserEmail">Email</label>
+                        <input type="email" id="editUserEmail" [(ngModel)]="tempUser.email" name="email"
+                            class="form-control" required />
+                    </div>
 
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                            <button type="submit" class="btn btn-primary">Guardar</button>
-                        </div>
-                    </form>
-                </div>
+                    <div class="form-group">
+                        <label for="editUserPassword">Password</label>
+                        <input type="password" id="editUserPassword" [(ngModel)]="tempUser.password" name="password"
+                            class="form-control" />
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Modal para visualizar usuario -->
-    <div class="modal fade" id="viewMoreModal" tabindex="-1" aria-labelledby="viewUserModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="viewUserModalLabel">Detalles del Usuario</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+<!-- Modal for View More -->
+<div class="modal fade" id="viewMoreModal" tabindex="-1" aria-labelledby="viewUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewUserModalLabel">User Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="closeCreate">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">Name</label>
+                    <p class="form-control-plaintext" id="userName">{{ tempUser.name }}</p>
                 </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label">Nombre</label>
-                        <p class="form-control-plaintext" id="userName">{{ tempUser.name }}</p>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Correo</label>
-                        <p class="form-control-plaintext" id="userEmail">{{ tempUser.email }}</p>
-                    </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <p class="form-control-plaintext" id="userEmail">{{ tempUser.email }}</p>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">cerrar</button>
-                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>

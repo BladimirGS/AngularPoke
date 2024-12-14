@@ -19,7 +19,7 @@
                         <option [ngValue]="10">10</option>
                         <option [ngValue]="20">20</option>
                         <option [ngValue]="50">50</option>
-                      </select>                      
+                    </select>
                 </div>
             </div>
         </div>
@@ -126,7 +126,6 @@
                     <div *ngIf="selectedPokemon">
                         <h5>{{ selectedPokemon.nombre }}</h5>
                         <img [src]="selectedPokemon.imagen" alt="{{ selectedPokemon.nombre }}" width="150" />
-                        <!-- <p><strong>ID:</strong> {{ selectedPokemon.id }}</p> -->
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -136,7 +135,7 @@
         </div>
     </div>
 
-    <!-- Formulario para agregar un nuevo Pokémon -->
+    <!-- Modal for create Pokemon -->
     <div class="modal fade" id="createPokemonModal" tabindex="-1" role="dialog"
         aria-labelledby="createPokemonModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
@@ -163,7 +162,6 @@
 
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <!-- Este botón ahora es un submit que llama a createPokemon() -->
                             <button type="submit" class="btn btn-primary">Save</button>
                         </div>
                     </form>

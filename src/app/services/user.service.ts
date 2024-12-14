@@ -15,7 +15,11 @@ export class UserService {
     return this.http.get<any[]>(this.apiUrl);
   }
 
-  createUser(user: { name: string; email: string; password: string }): Observable<any> {
+  createUser(user: {
+    name: string;
+    email: string;
+    password: string;
+  }): Observable<any> {
     return this.http.post<any>(this.apiUrl, user);
   }
 
@@ -23,7 +27,10 @@ export class UserService {
     return this.http.get<any>(`${this.apiUrl}/${id}`);
   }
 
-  updateUser(id: number, user: { name: string; email: string; password?: string }): Observable<any> {
+  updateUser(
+    id: number,
+    user: { name: string; email: string; password?: string }
+  ): Observable<any> {
     return this.http.put<any>(`${this.apiUrl}/${id}`, user);
   }
 
@@ -50,8 +57,13 @@ export class UserService {
 
   logout(): void {
     const logoutUrl = 'http://127.0.0.1:8000/api/logout';
-    this.http.post(logoutUrl, {}).subscribe(() => {
-      localStorage.removeItem('currentUser');
+    this.http.post(logoutUrl, {}).subscribe({
+      next: () => {
+        localStorage.removeItem('currentUser');
+      },
+      error: (error) => {
+        console.error('Error al cerrar sesión:', error);
+      },
     });
   }
 
